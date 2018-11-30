@@ -33,7 +33,7 @@ class Pass {
                 return false;
             }
         case .hourlyEmployeeFood, .hourlyEmployeeRide, .hourlyEmployeeMaintenance, .manager:
-            if let personalInfo = personalInfo, let _ = personalInfo.firstName, let _ = personalInfo.lastName, let _ = personalInfo.streetAddress, let _ = personalInfo.state, let _ = personalInfo.zip{
+            if let personalInfo = personalInfo, let _ = personalInfo.firstName, let _ = personalInfo.lastName, let _ = personalInfo.streetAddress, let _ = personalInfo.city, let _ = personalInfo.state, let _ = personalInfo.zip{
                 return true
             } else {
                 return false

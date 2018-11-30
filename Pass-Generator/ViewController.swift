@@ -13,9 +13,11 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         var tests = Tests()
-        
+        for i in 1...11{
         do{
-            try tests.beginTest()
+            print("Beginning Test #\(i)")
+            try tests.beginTest(testRun: i)
+            print("\n\n")
             
         
         }catch PassError.cityMissing {
@@ -32,6 +34,7 @@ class ViewController: UIViewController {
             print("Zip is missing");
         }catch {
             print("Unhandled Error");
+        }
         }
     }
 

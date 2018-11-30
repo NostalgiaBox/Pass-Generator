@@ -9,11 +9,13 @@
 import Foundation
 
 protocol Swipable {
+    var name: String {get}
     func swipe(pass: Pass)
     func checkBirthday(pass: Pass) -> Bool
 }
 
 class RideReader: Swipable {
+    var name = "Ride Reader"
     func checkBirthday(pass: Pass) -> Bool{
         
         if let personalInfo = pass.personalInfo, let birthday = personalInfo.dateOfBirth {
@@ -44,6 +46,9 @@ class RideReader: Swipable {
         else{
             pass.swipeTime = date;
             if (pass.visitorType.rideAccess){
+                if (pass.visitorType.skipLines){
+                    print("Go to the front of the line")
+                }
             print("Access Granted to Rides")
         } else {
             print("Access Denied to Rides")
@@ -57,6 +62,7 @@ class RideReader: Swipable {
 }
 
 class FoodReader: Swipable {
+    var name = "Food Reader"
     func swipe(pass: Pass) {
         let date = Date();
         if (checkBirthday(pass: pass)){
@@ -98,6 +104,7 @@ class FoodReader: Swipable {
 }
 
 class MerchReader: Swipable {
+    var name = "Merch Reader"
     func swipe(pass: Pass) {
         let date = Date();
         if (checkBirthday(pass: pass)){
@@ -139,6 +146,7 @@ class MerchReader: Swipable {
 }
 
 class SecurityReader: Swipable {
+    var name = "Security Reader"
     let securityArea: AreaAccess
     func swipe(pass: Pass) {
         let date = Date();
