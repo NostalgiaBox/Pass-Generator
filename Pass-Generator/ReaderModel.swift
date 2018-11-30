@@ -10,14 +10,44 @@ import Foundation
 
 protocol Swipable {
     func swipe(pass: Pass)
+    func checkBirthday(pass: Pass) -> Bool
 }
 
 class RideReader: Swipable {
+    func checkBirthday(pass: Pass) -> Bool{
+        
+        if let personalInfo = pass.personalInfo, let birthday = personalInfo.dateOfBirth {
+            let dateFormatter = DateFormatter()
+            let date = Date();
+            dateFormatter.dateStyle = .full
+            
+            dateFormatter.timeStyle = .full
+            dateFormatter.dateFormat = "MMMM-dd-yyyy"
+            let birthdayString = dateFormatter.string(from: birthday)
+            let comparisonString = dateFormatter.string(from: date)
+            if(birthdayString == comparisonString){
+                return true;
+            }
+            
+        }
+        return false;
+    }
+    
     func swipe(pass: Pass) {
-        if (pass.visitorType.rideAccess){
-            print("Access Granted")
+        let date = Date();
+        if (checkBirthday(pass: pass)){
+            print("Happy Birthday")
+        }
+        if (date.timeIntervalSince(pass.swipeTime) < 5){
+            print("Too Soon to Swipe Again")
+        }
+        else{
+            pass.swipeTime = date;
+            if (pass.visitorType.rideAccess){
+            print("Access Granted to Rides")
         } else {
-            print("Access Denied")
+            print("Access Denied to Rides")
+        }
         }
     }
     
@@ -28,13 +58,40 @@ class RideReader: Swipable {
 
 class FoodReader: Swipable {
     func swipe(pass: Pass) {
+        let date = Date();
+        if (checkBirthday(pass: pass)){
+            print("Happy Birthday")
+        }
+        if (date.timeIntervalSince(pass.swipeTime) < 5){
+            print("Too Soon to Swipe Again")
+        }
+        else{
+            pass.swipeTime = date;
         if let foodDiscount = pass.visitorType.foodDiscount {
             print("Food is discounted at \(foodDiscount)%")
         } else {
-            print("No discount")
+            print("No discount at food stores")
         }
     }
-    
+    }
+    func checkBirthday(pass: Pass) -> Bool{
+        
+        if let personalInfo = pass.personalInfo, let birthday = personalInfo.dateOfBirth {
+            let dateFormatter = DateFormatter()
+            let date = Date();
+            dateFormatter.dateStyle = .full
+            
+            dateFormatter.timeStyle = .full
+            dateFormatter.dateFormat = "MMMM-dd-yyyy"
+            let birthdayString = dateFormatter.string(from: birthday)
+            let comparisonString = dateFormatter.string(from: date)
+            if(birthdayString == comparisonString){
+                return true;
+            }
+        
+        }
+        return false;
+    }
     init(){
         
     }
@@ -42,13 +99,40 @@ class FoodReader: Swipable {
 
 class MerchReader: Swipable {
     func swipe(pass: Pass) {
+        let date = Date();
+        if (checkBirthday(pass: pass)){
+            print("Happy Birthday")
+        }
+        if (date.timeIntervalSince(pass.swipeTime) < 5){
+            print("Too Soon to Swipe Again")
+        }
+        else{
+            pass.swipeTime = date;
         if let merchDiscount = pass.visitorType.merchDiscount {
             print("Merchandise is discounted at \(merchDiscount)%")
         } else {
-            print("No discount")
+            print("No discount at merch stores")
         }
     }
-    
+    }
+    func checkBirthday(pass: Pass) -> Bool{
+        
+        if let personalInfo = pass.personalInfo, let birthday = personalInfo.dateOfBirth {
+            let dateFormatter = DateFormatter()
+            let date = Date();
+            dateFormatter.dateStyle = .full
+            
+            dateFormatter.timeStyle = .full
+            dateFormatter.dateFormat = "MMMM-dd-yyyy"
+            let birthdayString = dateFormatter.string(from: birthday)
+            let comparisonString = dateFormatter.string(from: date)
+            if(birthdayString == comparisonString){
+                return true;
+            }
+            
+        }
+        return false;
+    }
     init(){
         
     }
@@ -57,13 +141,40 @@ class MerchReader: Swipable {
 class SecurityReader: Swipable {
     let securityArea: AreaAccess
     func swipe(pass: Pass) {
+        let date = Date();
+        if (checkBirthday(pass: pass)){
+            print("Happy Birthday")
+        }
+        if (date.timeIntervalSince(pass.swipeTime) < 5){
+            print("Too Soon to Swipe Again")
+        }
+        else{
+            pass.swipeTime = date;
         if (pass.visitorType.areaAccess.contains(securityArea)){
-            print("Access Granted")
+            print("Access Granted to \(securityArea)")
         } else {
-            print("Access Denied")
+            print("Access Denied to \(securityArea)")
         }
     }
-    
+    }
+    func checkBirthday(pass: Pass) -> Bool{
+        
+        if let personalInfo = pass.personalInfo, let birthday = personalInfo.dateOfBirth {
+            let dateFormatter = DateFormatter()
+            let date = Date();
+            dateFormatter.dateStyle = .full
+            
+            dateFormatter.timeStyle = .full
+            dateFormatter.dateFormat = "MMMM-dd-yyyy"
+            let birthdayString = dateFormatter.string(from: birthday)
+            let comparisonString = dateFormatter.string(from: date)
+            if(birthdayString == comparisonString){
+                return true;
+            }
+            
+        }
+        return false;
+    }
     init(securityArea: AreaAccess){
        self.securityArea = securityArea
     }

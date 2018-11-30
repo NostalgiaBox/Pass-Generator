@@ -11,12 +11,15 @@ import Foundation
 class Pass {
     var visitorType: VisitorType
     var personalInfo: PersonalInfo?
+    var swipeTime: Date
     
     init(visitorType: VisitorType, personalInfo: PersonalInfo) throws{
+        self.swipeTime = Date()
         self.visitorType = visitorType
         if(!verifyInfo(personalInfo: personalInfo, visitorType: visitorType)){
             throw PassError.personalInfoMissing
         }
+        self.personalInfo = personalInfo
     }
     
     func verifyInfo(personalInfo: PersonalInfo?, visitorType: VisitorType) -> Bool{
@@ -41,6 +44,11 @@ class Pass {
 
 enum PassError: Error {
     case personalInfoMissing
+    case dateOfBirthMissing
+    case cityMissing
+    case stateMissing
+    case zipMissing
+    case streetAddressMissing
 }
 
 struct PersonalInfo {

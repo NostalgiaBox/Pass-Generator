@@ -12,29 +12,30 @@ class ViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        let personalInfo = PersonalInfo(firstName: "Bo", lastName: "Duke", streetAddress: nil, city: nil, state: nil, zip: nil, dateOfBirth: nil)
-        do{let pass: Pass = try Pass(visitorType: .classicGuest, personalInfo: personalInfo)
-            gauntlet(pass: pass)
-        }
-        catch{}
+        var tests = Tests()
         
+        do{
+            try tests.beginTest()
+            
+        
+        }catch PassError.cityMissing {
+            print("City is missing");
+        }catch PassError.dateOfBirthMissing {
+            print("DoB is missing");
+        }catch PassError.personalInfoMissing {
+            print("Personal Info is missing");
+        }catch PassError.stateMissing {
+            print("State is missing");
+        }catch PassError.streetAddressMissing {
+            print("Street is missing");
+        }catch PassError.zipMissing {
+            print("Zip is missing");
+        }catch {
+            print("Unhandled Error");
+        }
     }
 
-    func gauntlet(pass: Pass){
-        let rideReader = RideReader()
-        let foodReader = FoodReader()
-        let merchReader = MerchReader()
-        let amusementReader = SecurityReader(securityArea: .amusement)
-        let kitchenReader = SecurityReader(securityArea: .kitchen)
-        let maintenanceReader = SecurityReader(securityArea: .maintenance)
-        let officeReader = SecurityReader(securityArea: .office)
-        let rideControlReader = SecurityReader(securityArea: .rideControl)
-        let ReaderArray: [Swipable] = [rideReader, foodReader, merchReader, amusementReader, kitchenReader, maintenanceReader, officeReader, rideControlReader]
-        for reader in ReaderArray {
-            print("Swiping Reader")
-            reader.swipe(pass: pass)
-        }
-    }
+    
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
