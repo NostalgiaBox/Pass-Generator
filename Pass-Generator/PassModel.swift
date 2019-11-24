@@ -8,6 +8,8 @@
 
 import Foundation
 
+
+
 class Pass {
     var visitorType: VisitorType
     var personalInfo: PersonalInfo?
@@ -17,8 +19,10 @@ class Pass {
         self.swipeTime = Date()
         self.visitorType = visitorType
         if(!verifyInfo(personalInfo: personalInfo, visitorType: visitorType)){
+            print("THROW!")
             throw PassError.personalInfoMissing
         }
+        print("NO THROW")
         self.personalInfo = personalInfo
     }
     
@@ -32,12 +36,32 @@ class Pass {
             } else {
                 return false;
             }
-        case .hourlyEmployeeFood, .hourlyEmployeeRide, .hourlyEmployeeMaintenance, .manager:
+        case .hourlyEmployeeFood, .hourlyEmployeeRide, .hourlyEmployeeMaintenance, .manager, .seasonPassGuest:
             if let personalInfo = personalInfo, let _ = personalInfo.firstName, let _ = personalInfo.lastName, let _ = personalInfo.streetAddress, let _ = personalInfo.city, let _ = personalInfo.state, let _ = personalInfo.zip{
                 return true
             } else {
                 return false
             }
+        case .seniorGuest:
+            if let personalInfo = personalInfo, let _ = personalInfo.firstName, let _ = personalInfo.lastName, let _ = personalInfo.dateOfBirth {
+                return true
+            } else {
+                return false
+            }
+        case .vendor:
+            if let personalInfo = personalInfo, let _ = personalInfo.firstName, let _ = personalInfo.lastName, let _ = personalInfo.streetAddress, let _ = personalInfo.city, let _ = personalInfo.state, let _ = personalInfo.zip, var _ = personalInfo.company{
+                    return true
+            } else {
+                return false
+            }
+            
+        case .contractEmployee:
+            if let personalInfo = personalInfo, let _ = personalInfo.firstName, let _ = personalInfo.lastName, let _ = personalInfo.streetAddress, let _ = personalInfo.city, let _ = personalInfo.state, let _ = personalInfo.zip, let _ = personalInfo.contractNumber{
+                 return true
+            } else {
+                return false
+            }
+            
         }
     }
 }
@@ -49,6 +73,52 @@ enum PassError: Error {
     case stateMissing
     case zipMissing
     case streetAddressMissing
+    case companyMissing
+    case dateOfVisitMissing
+    case contractMissing
+}
+
+enum Contract {
+    case number1001
+    case number1002
+    case number1003
+    case number2001
+    case number2002
+    
+    var areaAccess: [AreaAccess]{
+        switch self{
+        case .number1001:
+            return [.rideControl, .amusement]
+        case .number1002:
+            return [.rideControl, .amusement, .maintenance]
+        case .number1003:
+            return [.amusement, .kitchen,.rideControl,.maintenance, .office]
+        case .number2001:
+            return [.office]
+        case .number2002:
+            return [.kitchen, .maintenance, .office]
+        }
+    }
+}
+
+enum Company {
+    case orkin
+    case acme
+    case fedex
+    case NWElectrical
+    
+    var areaAccess: [AreaAccess]{
+        switch self{
+        case .acme:
+            return [.kitchen]
+        case .orkin:
+            return [.kitchen, .rideControl, .amusement]
+        case .fedex:
+            return [.office,.maintenance]
+        case .NWElectrical:
+            return [.amusement,.kitchen,.rideControl,.maintenance,.office]
+        }
+    }
 }
 
 struct PersonalInfo {
@@ -59,9 +129,13 @@ struct PersonalInfo {
     var state: String?
     var zip: String?
     var dateOfBirth: Date?
+    var company: Company?
+    var dateOfVisit: Date?
+    var contractNumber: Contract?
     
     init(firstName: String?, lastName: String?, streetAddress: String?,
-         city: String?, state: String?, zip: String?, dateOfBirth: Date?){
+         city: String?, state: String?, zip: String?, dateOfBirth: Date?,
+         company: Company?, dateOfVisit: Date?, contractNumber: Contract?){
         self.firstName = firstName
         self.lastName = lastName
         self.streetAddress = streetAddress
@@ -69,6 +143,9 @@ struct PersonalInfo {
         self.state = state
         self.zip = zip
         self.dateOfBirth = dateOfBirth
+        self.dateOfVisit = dateOfVisit
+        self.company = company
+        self.contractNumber = contractNumber
     }
 }
 enum AreaAccess {
@@ -88,6 +165,10 @@ enum VisitorType {
     case hourlyEmployeeRide
     case hourlyEmployeeMaintenance
     case manager
+    case seasonPassGuest
+    case seniorGuest
+    case contractEmployee
+    case vendor
 }
 
 extension VisitorType{
@@ -106,21 +187,23 @@ extension VisitorType{
         }
     }
     var foodDiscount: Int?{
-    switch self {
-    case .VIP:
-    return 10
-    case .hourlyEmployeeFood, .hourlyEmployeeRide, .hourlyEmployeeMaintenance:
-    return 15
-    case .manager:
-    return 25
-    default:
-    return nil
+        switch self {
+        case .VIP, .seasonPassGuest, .seniorGuest:
+            return 10
+        case .hourlyEmployeeFood, .hourlyEmployeeRide, .hourlyEmployeeMaintenance:
+            return 15
+        case .manager:
+            return 25
+        default:
+            return nil
     }
     }
     
     var merchDiscount: Int? {
         switch self {
-        case .VIP:
+        case .seniorGuest:
+            return 10;
+        case .VIP, .seasonPassGuest:
             return 20;
     case.hourlyEmployeeFood, .hourlyEmployeeRide, .hourlyEmployeeMaintenance, .manager:
             return 25;
@@ -130,7 +213,7 @@ extension VisitorType{
     }
     var areaAccess: [AreaAccess]{
         switch self{
-        case .hourlyEmployeeFood:
+        case .hourlyEmployeeFood, .vendor, .contractEmployee:
             return [.kitchen, .amusement]
         case .hourlyEmployeeRide:
             return [.rideControl, .amusement]
@@ -138,8 +221,10 @@ extension VisitorType{
             return [.amusement, .kitchen,.rideControl,.maintenance]
         case .manager:
             return [.amusement,.kitchen,.rideControl,.maintenance,.office]
-        default:
+        case .freeChildGuest:
             return [.amusement]
+        default:
+            return []
         }
     }
 }

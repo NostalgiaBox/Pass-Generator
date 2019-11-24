@@ -158,13 +158,29 @@ class SecurityReader: Swipable {
         }
         else{
             pass.swipeTime = date;
-        if (pass.visitorType.areaAccess.contains(securityArea)){
+            if (pass.visitorType == .vendor){
+                if (pass.personalInfo!.company!.areaAccess.contains(securityArea)){
+                    print("Access Granted to \(securityArea)")
+                }else {
+                    print("Access Denied to \(securityArea)")
+                }
+            }else if (pass.visitorType == .contractEmployee){
+                if (pass.personalInfo!.company!.areaAccess.contains(securityArea)){
+                    print("Access Granted to \(securityArea)")
+                }else {
+                    print("Access Denied to \(securityArea)")
+                }
+            } else
+            if (pass.visitorType.areaAccess.contains(securityArea)){
             print("Access Granted to \(securityArea)")
         } else {
             print("Access Denied to \(securityArea)")
         }
     }
     }
+    
+    
+    
     func checkBirthday(pass: Pass) -> Bool{
         
         if let personalInfo = pass.personalInfo, let birthday = personalInfo.dateOfBirth {

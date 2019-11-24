@@ -8,7 +8,7 @@
 
 import Foundation
 
-class Tests {
+/*class Tests {
     func beginTest(testRun: Int) throws {
         switch testRun{
         case 1:
@@ -102,3 +102,4 @@ class Tests {
         }
     }
 }
+*/
