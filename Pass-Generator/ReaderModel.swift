@@ -10,9 +10,10 @@ import Foundation
 
 protocol Swipable {
     var name: String {get}
-    func swipe(pass: Pass)
+    func swipe(pass: Pass) -> (Bool, String)
     func checkBirthday(pass: Pass) -> Bool
 }
+
 
 class RideReader: Swipable {
     var name = "Ride Reader"
@@ -24,7 +25,7 @@ class RideReader: Swipable {
             dateFormatter.dateStyle = .full
             
             dateFormatter.timeStyle = .full
-            dateFormatter.dateFormat = "MMMM-dd-yyyy"
+            dateFormatter.dateFormat = "MMM dd"
             let birthdayString = dateFormatter.string(from: birthday)
             let comparisonString = dateFormatter.string(from: date)
             if(birthdayString == comparisonString){
@@ -35,25 +36,31 @@ class RideReader: Swipable {
         return false;
     }
     
-    func swipe(pass: Pass) {
+    func swipe(pass: Pass) -> (Bool, String){
         let date = Date();
+        var access = false
+        var outputResult = ""
         if (checkBirthday(pass: pass)){
-            print("Happy Birthday")
+            outputResult = "Happy Birthday\n"
         }
         if (date.timeIntervalSince(pass.swipeTime) < 5){
-            print("Too Soon to Swipe Again")
+            outputResult = outputResult + "Too Soon to Swipe Again"
         }
         else{
             pass.swipeTime = date;
             if (pass.visitorType.rideAccess){
                 if (pass.visitorType.skipLines){
-                    print("Go to the front of the line")
+                    
+                    outputResult = outputResult + "Go to the front of the line\n"
                 }
-            print("Access Granted to Rides")
+            access = true
+            outputResult = outputResult + "Access Granted to Rides"
         } else {
-            print("Access Denied to Rides")
+            access = false
+            outputResult = outputResult + "Access Denied to Rides"
         }
         }
+        return (access, outputResult)
     }
     
     init(){
@@ -63,22 +70,27 @@ class RideReader: Swipable {
 
 class FoodReader: Swipable {
     var name = "Food Reader"
-    func swipe(pass: Pass) {
+    func swipe(pass: Pass) -> (Bool, String){
         let date = Date();
+        var access = false
+        var outputResult = ""
         if (checkBirthday(pass: pass)){
-            print("Happy Birthday")
+            outputResult = "Happy Birthday\n"
         }
         if (date.timeIntervalSince(pass.swipeTime) < 5){
-            print("Too Soon to Swipe Again")
+            outputResult = outputResult + "Too Soon to Swipe Again\n"
         }
         else{
             pass.swipeTime = date;
         if let foodDiscount = pass.visitorType.foodDiscount {
-            print("Food is discounted at \(foodDiscount)%")
+            outputResult = outputResult + "Food is discounted at \(foodDiscount)%"
+            access = true
         } else {
-            print("No discount at food stores")
+            outputResult = outputResult + "No discount at food stores"
+            access = true
         }
     }
+        return (access, outputResult)
     }
     func checkBirthday(pass: Pass) -> Bool{
         
@@ -88,7 +100,7 @@ class FoodReader: Swipable {
             dateFormatter.dateStyle = .full
             
             dateFormatter.timeStyle = .full
-            dateFormatter.dateFormat = "MMMM-dd-yyyy"
+            dateFormatter.dateFormat = "MMM dd"
             let birthdayString = dateFormatter.string(from: birthday)
             let comparisonString = dateFormatter.string(from: date)
             if(birthdayString == comparisonString){
@@ -105,22 +117,27 @@ class FoodReader: Swipable {
 
 class MerchReader: Swipable {
     var name = "Merch Reader"
-    func swipe(pass: Pass) {
+    func swipe(pass: Pass) -> (Bool, String){
         let date = Date();
+        var outputResult = ""
+        var access = false
         if (checkBirthday(pass: pass)){
-            print("Happy Birthday")
+            outputResult = "Happy Birthday\n"
         }
         if (date.timeIntervalSince(pass.swipeTime) < 5){
-            print("Too Soon to Swipe Again")
+            outputResult = outputResult + "Too Soon to Swipe Again\n"
         }
         else{
             pass.swipeTime = date;
         if let merchDiscount = pass.visitorType.merchDiscount {
-            print("Merchandise is discounted at \(merchDiscount)%")
+            outputResult = outputResult + "Merchandise is discounted at \(merchDiscount)%"
+            access = true
         } else {
-            print("No discount at merch stores")
+            outputResult = outputResult + "No discount at merch stores"
+            access = true
         }
     }
+        return (access, outputResult)
     }
     func checkBirthday(pass: Pass) -> Bool{
         
@@ -130,9 +147,10 @@ class MerchReader: Swipable {
             dateFormatter.dateStyle = .full
             
             dateFormatter.timeStyle = .full
-            dateFormatter.dateFormat = "MMMM-dd-yyyy"
+            dateFormatter.dateFormat = "MMM dd"
             let birthdayString = dateFormatter.string(from: birthday)
             let comparisonString = dateFormatter.string(from: date)
+            print("\(birthdayString) birthday \(comparisonString) comparison")
             if(birthdayString == comparisonString){
                 return true;
             }
@@ -148,35 +166,47 @@ class MerchReader: Swipable {
 class SecurityReader: Swipable {
     var name = "Security Reader"
     let securityArea: AreaAccess
-    func swipe(pass: Pass) {
+    func swipe(pass: Pass) -> (Bool, String) {
         let date = Date();
+        var outputResult = ""
+        var access = false
         if (checkBirthday(pass: pass)){
-            print("Happy Birthday")
+            outputResult = "Happy Birthday\n"
         }
         if (date.timeIntervalSince(pass.swipeTime) < 5){
-            print("Too Soon to Swipe Again")
+            outputResult = outputResult + "Too Soon to Swipe Again"
+            access = false
         }
         else{
             pass.swipeTime = date;
             if (pass.visitorType == .vendor){
                 if (pass.personalInfo!.company!.areaAccess.contains(securityArea)){
-                    print("Access Granted to \(securityArea)")
+                    access = true
+                    outputResult = outputResult + "Access Granted for \(securityArea)"
                 }else {
-                    print("Access Denied to \(securityArea)")
+                    access = false
+                    outputResult = outputResult + "Access Denied to \(securityArea)"
                 }
             }else if (pass.visitorType == .contractEmployee){
-                if (pass.personalInfo!.company!.areaAccess.contains(securityArea)){
-                    print("Access Granted to \(securityArea)")
+                if (pass.personalInfo!.contractNumber!.areaAccess.contains(securityArea)){
+                    access = true
+                    outputResult = outputResult + "Access Granted to \(securityArea)"
                 }else {
-                    print("Access Denied to \(securityArea)")
+                    access = false
+                    outputResult = outputResult + "Access Denied to \(securityArea)"
                 }
             } else
             if (pass.visitorType.areaAccess.contains(securityArea)){
-            print("Access Granted to \(securityArea)")
+            access = true
+            outputResult = outputResult + "Access Granted to \(securityArea)"
         } else {
-            print("Access Denied to \(securityArea)")
+            access = false
+            outputResult = outputResult + "Access Denied to \(securityArea)"
         }
+        
+        
     }
+        return (access, outputResult)
     }
     
     
@@ -189,7 +219,7 @@ class SecurityReader: Swipable {
             dateFormatter.dateStyle = .full
             
             dateFormatter.timeStyle = .full
-            dateFormatter.dateFormat = "MMMM-dd-yyyy"
+            dateFormatter.dateFormat = "MMM dd"
             let birthdayString = dateFormatter.string(from: birthday)
             let comparisonString = dateFormatter.string(from: date)
             if(birthdayString == comparisonString){

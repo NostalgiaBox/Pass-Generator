@@ -49,7 +49,7 @@ class Pass {
                 return false
             }
         case .vendor:
-            if let personalInfo = personalInfo, let _ = personalInfo.firstName, let _ = personalInfo.lastName, let _ = personalInfo.streetAddress, let _ = personalInfo.city, let _ = personalInfo.state, let _ = personalInfo.zip, var _ = personalInfo.company{
+            if let personalInfo = personalInfo, let _ = personalInfo.firstName, let _ = personalInfo.lastName, var _ = personalInfo.company{
                     return true
             } else {
                 return false
@@ -96,7 +96,7 @@ enum Contract {
         case .number2001:
             return [.office]
         case .number2002:
-            return [.kitchen, .maintenance, .office]
+            return [.kitchen, .maintenance]
         }
     }
 }
@@ -172,8 +172,37 @@ enum VisitorType {
 }
 
 extension VisitorType{
+    var label: String {
+        switch self {
+        case .classicGuest:
+            return "Classic Guest"
+        case .VIP:
+            return "VIP Guest"
+        case .freeChildGuest:
+            return "Free Child Guest"
+        case .hourlyEmployeeFood:
+            return "Hourly Food Employee"
+        case .hourlyEmployeeRide:
+            return "Hourly Ride Employee"
+        case .hourlyEmployeeMaintenance:
+            return "Hourly Maintenance Employee"
+        case .manager:
+            return "Manager"
+        case .seasonPassGuest:
+            return "Season Pass Guest"
+        case .seniorGuest:
+            return "Senior Guest"
+        case .contractEmployee:
+            return "Contract Employee"
+        case .vendor:
+            return "Vendor"
+        }
+    }
+    
     var rideAccess: Bool {
         switch self {
+        case .contractEmployee, .vendor:
+            return false
         default:
             return true
         }

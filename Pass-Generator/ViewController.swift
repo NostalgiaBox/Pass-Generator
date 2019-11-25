@@ -10,6 +10,7 @@ import UIKit
 
 class ViewController: UIViewController {
     var fullArray: [UITextField] = []
+    var pass: Pass? = nil
    // var nameAndAddressArray: [UITextField] = []
     var nameAndBirthdayArray: [UITextField] = []
     var vendorArray: [UITextField] = []
@@ -17,7 +18,7 @@ class ViewController: UIViewController {
     var optionButtonVisitorType: [VisitorType] = [.classicGuest, .VIP, .freeChildGuest, .seasonPassGuest, .seniorGuest]
     var selectedVisitorType: VisitorType = .classicGuest
     var currentActiveTextFields: [UITextField] = []
-    
+    var sampleData: [VisitorType : [UITextField : String]] = Dictionary<VisitorType, Dictionary<UITextField, String>>()
     @IBOutlet weak var DOBField: UITextField!
     @IBOutlet weak var SSNField: UITextField!
     @IBOutlet weak var ProjectField: UITextField!
@@ -49,6 +50,7 @@ class ViewController: UIViewController {
     }
     @IBAction func pushOption4(_ sender: Any) {
         selectedVisitorType = (optionButtonVisitorType[3])
+        print(optionButtonDestinations[3])
         setFields(optionButtonDestinations[3])
     }
     @IBAction func pushOption5(_ sender: Any) {
@@ -58,8 +60,10 @@ class ViewController: UIViewController {
     @IBAction func GeneratePass(_ sender: Any) {
         
         let personalInfo = generatePersonalInfo()
-        do { let pass = try Pass(visitorType: selectedVisitorType, personalInfo: personalInfo)
+        do {
+            pass = try Pass(visitorType: selectedVisitorType, personalInfo: personalInfo)
             print("Passed!")
+            performSegue(withIdentifier: "MySegue", sender: nil)
         } catch {
             highlightNilFields(currentActiveTextFields)
             print("Error")
@@ -67,9 +71,7 @@ class ViewController: UIViewController {
         
     }
     @IBAction func PopulateData(_ sender: Any) {
-        DOBField.text = "ACTIVE"
-        DOBField.isUserInteractionEnabled = true
-        DOBField.backgroundColor = UIColor.white
+        populateData()
     }
     @IBAction func pushGuest(_ sender: Any) {
         optionButtonVisitorType = [.classicGuest, .VIP, .freeChildGuest, .seasonPassGuest, .seniorGuest]
@@ -86,6 +88,13 @@ class ViewController: UIViewController {
     @IBAction func pushVendor(_ sender: Any) {
         selectedVisitorType = .vendor
         setMenu(.vendor)
+    }
+    
+    func populateData(){
+    
+        for (key, value) in sampleData[selectedVisitorType]! {
+            key.text = value
+        }
     }
     
     func highlightNilFields(_ fields: [UITextField]){
@@ -109,8 +118,10 @@ class ViewController: UIViewController {
     func generatePersonalInfo() -> PersonalInfo {
         let contract: Contract? = checkContract(ProjectField.text)
         let company: Company? = checkCompany(CompanyField.text)
+        let date = Date()
         
-        let personalInfo = PersonalInfo(firstName: checkEmpty(FirstNameField), lastName: checkEmpty(LastNameField), streetAddress: checkEmpty(StreetField), city: checkEmpty(CityField), state: checkEmpty(StateField), zip: checkEmpty(ZipField), dateOfBirth: nil, company: company, dateOfVisit: nil, contractNumber: contract)
+        let personalInfo = PersonalInfo(firstName: checkEmpty(FirstNameField), lastName: checkEmpty(LastNameField), streetAddress: checkEmpty(StreetField), city: checkEmpty(CityField), state: checkEmpty(StateField), zip: checkEmpty(ZipField), dateOfBirth: checkDateEmpty(DOBField), company: company, dateOfVisit: date, contractNumber: contract)
+        print("Date of visit \(date)")
         return personalInfo
     }
     
@@ -122,20 +133,62 @@ class ViewController: UIViewController {
         }
     }
     
+    func checkDateEmpty(_ input: UITextField) -> Date? {
+        if !(input.hasText) {
+            return nil
+        } else {
+            let dateFormatter = DateFormatter()
+            print(input.text)
+            dateFormatter.dateFormat = "MMM dd,yyyy"
+            dateFormatter.locale = Locale(identifier: "en_US_POSIX") // set locale to reliable US_POSIX
+            let date = dateFormatter.date(from: input.text!)
+            print(date)
+            return date
+        }
+    }
+    
+    
+    lazy var datePicker: UIDatePicker = {
+          
+          let picker = UIDatePicker()
+          
+          picker.datePickerMode = .date
+          
+          picker.addTarget(self, action: #selector(datePickerChanged(_:)), for: .valueChanged)
+          
+          return picker
+      }()
+    lazy var dateFormatter: DateFormatter = {
+        
+        let formatter = DateFormatter()
+        
+        formatter.dateStyle = .medium
+        
+        formatter.timeStyle = .none
+        
+        return formatter
+    }()
+    
     func checkContract(_ contract: String?) -> Contract? {
         if let contract = contract {
             switch contract {
             case "1001":
                 return .number1001
+                ProjectField.backgroundColor = UIColor.white
             case "1002":
                 return .number1002
+                ProjectField.backgroundColor = UIColor.white
             case "1003":
                 return .number1003
+                ProjectField.backgroundColor = UIColor.white
             case "2001":
                 return .number2001
+                ProjectField.backgroundColor = UIColor.white
             case "2002":
                 return .number2002
+                ProjectField.backgroundColor = UIColor.white
             default:
+                ProjectField.text = nil
                 return nil
             }
         } else {
@@ -147,16 +200,22 @@ class ViewController: UIViewController {
         if var company = company {
             company = company.lowercased()
             company = String(company.filter { !" \n\t\r".contains($0) })
+            
             switch company {
             case "orkin":
                 return .orkin
+                CompanyField.backgroundColor = UIColor.white
             case "acme":
                 return .acme
+                CompanyField.backgroundColor = UIColor.white
             case "fedex":
                 return .fedex
+                CompanyField.backgroundColor = UIColor.white
             case "nwelectrical":
                 return .NWElectrical
+                CompanyField.backgroundColor = UIColor.white
             default:
+                CompanyField.text = nil
                 return nil
             }
         } else {
@@ -173,7 +232,7 @@ class ViewController: UIViewController {
                 showButton(Option4Button, label: "Season Pass Guest")
                 showButton(Option5Button, label: "Senior Guest")
             case .employee:
-                optionButtonDestinations = [.nameAndAddress, .nameAndAddress, .nameAndAddress, .nameAndAddress, .nameAndAddress, .nothing]
+                optionButtonDestinations = [.nameAndAddress, .nameAndAddress, .nameAndAddress, .contract, .nothing]
                 showButton(Option1Button, label: "Food Services")
                 showButton(Option2Button,
                     label: "Ride Services")
@@ -198,7 +257,10 @@ class ViewController: UIViewController {
             showHideFields(currentActiveTextFields)
         case .nothing:
             currentActiveTextFields = []
-            
+        case .contract:
+            print("Contract Baybeee")
+            currentActiveTextFields = [FirstNameField, LastNameField, StreetField,  CityField, StateField, ZipField, ProjectField]
+            showHideFields(currentActiveTextFields)
         case .birthdayOnly:
             currentActiveTextFields = [DOBField]
             
@@ -258,18 +320,65 @@ class ViewController: UIViewController {
         case birthdayOnly
         case nameAndBirthday
         case vendor
+        case contract
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?)
+    {
+        if segue.destination is PassViewController
+        {
+            let vc = segue.destination as? PassViewController
+            vc?.pass = pass
+        }
+    }
+    @objc func datePickerChanged(_ sender: UIDatePicker) {
+        
+        DOBField.text = dateFormatter.string(from: sender.date)
+    }
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+           
+           view.endEditing(true)
     }
     override func viewDidLoad() {
         
         
         fullArray = [FirstNameField, LastNameField, StreetField,  CityField, StateField, ZipField, CompanyField, DOBField, ProjectField]
      //   nameAndAddressArray = [FirstNameField, LastNameField, StreetField,  CityField, StateField, ZipField]
+       // contractArray
         nameAndBirthdayArray = [FirstNameField, LastNameField, DOBField]
         vendorArray = [FirstNameField, LastNameField, CompanyField, DOBField]
         optionButtons = [Option1Button, Option2Button, Option3Button, Option4Button, Option5Button]
         setFields(.nothing)
         hideAllButtons()
         super.viewDidLoad()
+        DOBField.inputView = datePicker
+        let nameAndAddressDict: [UITextField: String] = [FirstNameField: "John",
+                            LastNameField: "Smith",
+                            StreetField: "123 Easy St",
+                            CityField: "Springfield",
+                            StateField: "IL",
+        ZipField: "21212"]
+        sampleData = [.classicGuest: [:],
+                      .VIP: [:],
+                      .freeChildGuest: [DOBField: "Oct 20, 2010"],
+                      .hourlyEmployeeFood: nameAndAddressDict,
+                      .hourlyEmployeeRide: nameAndAddressDict,
+                      .hourlyEmployeeMaintenance: nameAndAddressDict,
+                      .manager: nameAndAddressDict,
+                      .seasonPassGuest: nameAndAddressDict,
+                      .seniorGuest: [FirstNameField: "Old",
+                                     LastNameField: "Man",
+                                     DOBField: "Jan 01, 1900"],
+                      .contractEmployee: [FirstNameField: "John",
+                                          LastNameField: "Smith",
+                                          StreetField: "123 Easy St",
+                                          CityField: "Springfield",
+                                          StateField: "IL",
+                                          ZipField: "21212", ProjectField: "1001"],
+                        .vendor: [FirstNameField: "John",
+                                  LastNameField: "Smith",
+                                  CompanyField: "orkin",
+                                  DOBField: "Jan 02, 2004"]]
        /* var tests = Tests()
         for i in 1...11{
         do{

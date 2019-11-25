@@ -15,6 +15,8 @@
 		7260B9412069F1C600D98D8B /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7260B93F2069F1C600D98D8B /* LaunchScreen.storyboard */; };
 		7260B94B2069F39600D98D8B /* PassModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7260B94A2069F39600D98D8B /* PassModel.swift */; };
 		727D6653238A336B00C9E680 /* PassViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 727D6652238A336B00C9E680 /* PassViewController.swift */; };
+		727D6656238B9A8E00C9E680 /* AccessGranted.wav in Resources */ = {isa = PBXBuildFile; fileRef = 727D6654238B9A8E00C9E680 /* AccessGranted.wav */; };
+		727D6657238B9A8E00C9E680 /* AccessDenied.wav in Resources */ = {isa = PBXBuildFile; fileRef = 727D6655238B9A8E00C9E680 /* AccessDenied.wav */; };
 		7299F32920F5A0F900899DC4 /* ReaderModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7299F32820F5A0F900899DC4 /* ReaderModel.swift */; };
 /* End PBXBuildFile section */
 
@@ -29,6 +31,8 @@
 		7260B9422069F1C600D98D8B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		7260B94A2069F39600D98D8B /* PassModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PassModel.swift; sourceTree = "<group>"; };
 		727D6652238A336B00C9E680 /* PassViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PassViewController.swift; sourceTree = "<group>"; };
+		727D6654238B9A8E00C9E680 /* AccessGranted.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = AccessGranted.wav; sourceTree = "<group>"; };
+		727D6655238B9A8E00C9E680 /* AccessDenied.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = AccessDenied.wav; sourceTree = "<group>"; };
 		7299F32820F5A0F900899DC4 /* ReaderModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReaderModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -72,6 +76,8 @@
 				7260B9422069F1C600D98D8B /* Info.plist */,
 				7299F32820F5A0F900899DC4 /* ReaderModel.swift */,
 				7228D54421B0D97900383A1E /* Tests.swift */,
+				727D6655238B9A8E00C9E680 /* AccessDenied.wav */,
+				727D6654238B9A8E00C9E680 /* AccessGranted.wav */,
 			);
 			path = "Pass-Generator";
 			sourceTree = "<group>";
@@ -135,8 +141,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				727D6656238B9A8E00C9E680 /* AccessGranted.wav in Resources */,
 				7260B9412069F1C600D98D8B /* LaunchScreen.storyboard in Resources */,
 				7260B93E2069F1C600D98D8B /* Assets.xcassets in Resources */,
+				727D6657238B9A8E00C9E680 /* AccessDenied.wav in Resources */,
 				7260B93C2069F1C600D98D8B /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
